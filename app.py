@@ -126,9 +126,9 @@ elif topic == "Computer Vision":
 		st.write("Face detection is a central algorithm in computer vision. The algorithm implemented below is a Haar Cascade Classifier. It detects several faces using classical methods, and not deep learning. There are however important parameters to choose.")
 		
 		font = cv2.FONT_HERSHEY_SIMPLEX
-		cascPath = "/usr/local/lib/python3.7/site-packages/cv2/data/haarcascade_frontalface_default.xml"
+		cascPath = "facedetect/haarcascade_frontalface_default.xml"
 		faceCascade = cv2.CascadeClassifier(cascPath)
-		gray = cv2.imread('faces.jpg', 0)
+		gray = cv2.imread('images/faces.jpg', 0)
 
 		st.markdown("*Original image:*")
 		plt.figure(figsize=(12,8))
@@ -136,7 +136,7 @@ elif topic == "Computer Vision":
 		st.pyplot()
 
 		scaleFactor = st.sidebar.slider("Scale Factor", 1.02, 1.15, 1.1, 0.01)
-		minNeighbors = st.sidebar.slider("Number of neighblrs", 1, 15, 5, 1)
+		minNeighbors = st.sidebar.slider("Number of neighbors", 1, 15, 5, 1)
 		minSize = st.sidebar.slider("Minimum size", 10, 200, 20, 1)
 		
 		# Detect faces
@@ -192,7 +192,7 @@ elif topic == "Computer Vision":
 		        output_layer_names = [output_layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 		        return net, output_layer_names
 
-		    net, output_layer_names = load_network("yolov3.cfg", "yolov3.weights")
+		    net, output_layer_names = load_network("yolov3/yolov3.cfg", "yolov3.weights")
 
 		    blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
 		    net.setInput(blob)
@@ -214,7 +214,7 @@ elif topic == "Computer Vision":
 		                confidences.append(float(confidence))
 		                class_IDs.append(classID)
 
-		    f = open("classes.txt", "r")
+		    f = open("yolov3/classes.txt", "r")
 		    f = f.readlines()
 		    f = [line.rstrip('\n') for line in list(f)]
 
@@ -243,13 +243,13 @@ elif topic == "Computer Vision":
 		img_type = st.sidebar.selectbox("Select image type?", ['Cars', 'People', 'Animals', "Meeting"])
 
 		if img_type == 'People':
-		    image_url = "people.jpg"
+		    image_url = "images/people.jpg"
 		elif img_type == 'Cars':
-		    image_url = "cars.jpg"
+		    image_url = "images/cars.jpg"
 		elif img_type == 'Animals':
-		    image_url = "animal.jpg"
+		    image_url = "images/animal.jpg"
 		elif img_type == 'Meeting':
-		    image_url = "meeting.jpg"
+		    image_url = "images/meeting.jpg"
 
 		image = load_present_image(image_url)
 
