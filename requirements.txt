@@ -1,0 +1,15 @@
+allennlp==0.9.0
+imutils==0.5.3
+opencv_python==4.1.2.30
+streamlit==0.48.1
+seaborn==0.9.0
+numpy==1.16.4
+altair==3.2.0
+matplotlib==3.1.0
+vega_datasets==0.7.0
+spacy==2.1.8
+pandas==0.24.2
+flair==0.4.4
+imageio==2.6.1
+pylab==0.0.2
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.1.0/en_core_web_sm-2.1.0.tar.gz
