@@ -2,6 +2,8 @@
 
 In this app, I'll be deploying NLP, Computer Vision, Speech Processing and Generative models in a single application on Streamlit. 
 
+## What's inside?
+
 The idea is to leverage *pre-trained* models as well as algorithm built on my side. It's a good opportunity for me to become more familiar with all pre-trained models available in the open-source community. 
 
 The algorithms covered are:
@@ -22,10 +24,24 @@ The algorithms covered are:
 	- A GAN to generate faces
 	- Text-to-images
 
-I integrate and deploy everything using Streamlit and Render.com. The application looks like this:
+I integrate and deploy everything using Streamlit and Render.com. 
+
+## How to use it?
+
+The application looks like this:
 
 ![image](images/screen_home.png)
 
-It is currently hosted by Render.com and each push leads to a new build of the app. I am using the standard plan (2Gb RAM).
+It is currently hosted by Render.com and each push leads to a new build of the app. I am using the standard plan (2Gb RAM). If you would like to contribute, feel free to submit a PR.
 
-I you would like to contribute, feel free to submit a PR.
+To run it locally, clone this project and run :
+
+```bash
+pip install -r requirements
+```
+
+Rrun the app:
+
+```bash
+streamlit run app.py
+```
