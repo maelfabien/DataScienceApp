@@ -128,7 +128,7 @@ elif topic == "Computer Vision":
 		font = cv2.FONT_HERSHEY_SIMPLEX
 		cascPath = "/usr/local/lib/python3.7/site-packages/cv2/data/haarcascade_frontalface_default.xml"
 		faceCascade = cv2.CascadeClassifier(cascPath)
-		gray = cv2.imread('faces.jpeg', 0)
+		gray = cv2.imread('faces.jpg', 0)
 
 		st.markdown("*Original image:*")
 		plt.figure(figsize=(12,8))
