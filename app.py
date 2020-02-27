@@ -15,8 +15,16 @@ import imageio
 #import dlib
 from imutils import face_utils
 
-def load_flair():
-	return flair.models.TextClassifier.load('en-sentiment')
+
+import NLP_ner
+import NLP_pos
+import NLP_flair
+import NLP_qa
+
+import CV_face
+import CV_yolo
+
+import SG_activity
 
 st.sidebar.title("Category")
 
@@ -30,241 +38,48 @@ if topic == "Natural Language":
 
 	if sub_topic == "Named Entity Detection":
 
-		st.title("Named Entity Recognition")
-
-		st.write("Named Entity Recognition is the process by which we identify named entities (persons, organisations, governments, money...) using a mix of deep learning (Long Short-Term Memory networks) and probabilitstic approach (Conitional Random Fields). This requires to train an algorithm to make a difference between Apple (a fruit) and Apple (the brand) based on contextual information. This type of algorithm is generally trained on large corpuses such as Wikipedia. This algorithm relies on SpaCy, a state-of-the-art library which implements natural language processing models in English and French.")
-		nlp = spacy.load("en_core_web_sm")
-
-		def return_NER(value):
-		    doc = nlp(value)
-		    return [(X.text, X.label_) for X in doc.ents]
-
-		input_sent = st.text_input("Input Sentence", "Orange sells 1 million Apple's phones each year.")
-
-		for res in return_NER(input_sent):
-			st.write(res[0], ":", res[1])
+		NLP_ner.add_ner()
 
 	elif sub_topic == "Part-Of-Speech Tagging":
 
-		st.title("Part-Of-Speech Tagging")
-
-		st.write("Part-Of-Speech Tagging is the process by which tag each word of a sentence with its correspondding grammatical function (determinant, noun, ajective...) using a mix of deep learning (Long Short-Term Memory networks) and probabilitstic approach (Conitional Random Fields). Just like Named Entity Recognition, this type of algorithm is generally trained on large corpuses such as Wikipedia. This algorithm relies on SpaCy, a state-of-the-art library which implements natural language processing models in English and French.")
-		nlp = spacy.load("en_core_web_sm")
-
-		def return_pos(value):
-		    doc = nlp(value)
-		    return [(X.text, X.pos_) for X in doc]
-
-		input_sent = st.text_input("Input Sentence", "Your input sentence goes here")
-
-		for res in return_pos(input_sent):
-			st.write(res[0], ":", res[1])
+		NLP_pos.add_pos()
 
 	elif sub_topic == "Sentiment Detection":
 
-		flair_sentiment = load_flair()
-
-		st.title("Sentiment Detection")
-		st.write("Sentiment Detection from text is a classical problem. This is used when you try to predict the sentiment of comments on a restaurant review website for example, or when you receive customer support messages and want to classify them. This task usually involves Deep Learning algorithms such as Long Short-Term Memory (LSTMs). This algorithm relies on Flair, a library developped by Zalando (shopping site) research team.")
-		
-		input_sent = st.text_input("Input Sentence", "Although quite poorly rated, the story was interesting and I enjoyed it.")
-
-		s = flair.data.Sentence(input_sent)
-		flair_sentiment.predict(s)
-
-		st.write('Your sentence is ', str(s.labels[0]).split()[0].lower(), " with ", str(np.round(float(str(s.labels[0]).split()[1][1:-1]),3)*100), " % probability.")
+		NLP_flair.add_flair()
 
 	elif sub_topic == "Question Answering":
 
-		st.title("Question Answering")
-		st.write("Question Answering is a state-of-the-art research topic that has been arising with the evolution of Deep Learning algorithms. You write a query regarding a long input text, the algorithm goes through the text and identifies the region of the text which is the most likely to contain the answer. The graph below displays 'attention', the process by which neural networks learn to focus on certain parts of the long text. The darker the cell, the most important the information was to identify the answer.")
-		
-		predictor = st.cache(
-		       pretrained.bidirectional_attention_flow_seo_2017,
-		       ignore_hash=True  # the Predictor is not hashable
-		)()
-
-		article_choice = st.sidebar.selectbox("Article to query", ["Netflix", "Italy"])
-
-		if article_choice == "Netflix":
-			passage = st.text_area("Article", """Netflix, Inc. is an American media-services provider and production company headquartered in Los Gatos, California, founded in 1997 by Reed Hastings and Marc Randolph in Scotts Valley, California. The company's primary business is its subscription-based streaming service which offers online streaming of a library of films and television programs, including those produced in-house. As of April 2019, Netflix had over 148 million paid subscriptions worldwide, including 60 million in the United States, and over 154 million subscriptions total including free trials. It is available worldwide except in mainland China (due to local restrictions), Syria, North Korea, and Crimea (due to US sanctions). The company also has offices in the Netherlands, Brazil, India, Japan, and South Korea. Netflix is a member of the Motion Picture Association (MPA).
-				Netflix's initial business model included DVD sales and rental by mail, but Hastings abandoned the sales about a year after the company's founding to focus on the initial DVD rental business. Netflix expanded its business in 2010 with the introduction of streaming media while retaining the DVD and Blu-ray rental business. The company expanded internationally in 2010 with streaming available in Canada, followed by Latin America and the Caribbean. Netflix entered the content-production industry in 2012, debuting its first series Lilyhammer.
-				Since 2012, Netflix has taken more of an active role as producer and distributor for both film and television series, and to that end, it offers a variety of "Netflix Original" content through its online library. By January 2016, Netflix services operated in more than 190 countries. Netflix released an estimated 126 original series and films in 2016, more than any other network or cable channel. Their efforts to produce new content, secure the rights for additional content, and diversify through 190 countries have resulted in the company racking up billions in debt: $21.9 billion as of September 2017, up from $16.8 billion from the previous year. $6.5 billion of this is long-term debt, while the remaining is in long-term obligations. In October 2018, Netflix announced it would raise another $2 billion in debt to help fund new content.
-				""")
-			question = st.text_input("Question", "Where are the headquarters of Netflix?")
-		elif article_choice == "Italy":
-			passage = st.text_area("Passage", "Italy, officially the Italian Republic is a European country consisting of a peninsula delimited by the Alps and surrounded by several islands. Italy is located in south-central Europe, and it is also considered a part of western Europe. The country covers a total area of 301,340 km2 (116,350 sq mi) and shares land borders with France, Switzerland, Austria, Slovenia, and the enclaved microstates of Vatican City and San Marino. Italy has a territorial exclave in Switzerland (Campione) and a maritime exclave in the Tunisian Sea (Lampedusa). With around 60 million inhabitants, Italy is the fourth-most populous member state of the European Union. Due to its central geographic location in Southern Europe and the Mediterranean, Italy has historically been home to myriad peoples and cultures. In addition to the various ancient peoples dispersed throughout modern-day Italy, the most predominant being the Indo-European Italic peoples who gave the peninsula its name, beginning from the classical era, Phoenicians and Carthaginians founded colonies mostly in insular Italy, Greeks established settlements in the so-called Magna Graecia of Southern Italy, while Etruscans and Celts inhabited central and northern Italy respectively. An Italic tribe known as the Latins formed the Roman Kingdom in the 8th century BC, which eventually became a republic with a government of the Senate and the People. The Roman Republic initially conquered and assimilated its neighbours on the peninsula, eventually expanding and conquering parts of Europe, North Africa and Asia. By the first century BC, the Roman Empire emerged as the dominant power in the Mediterranean Basin and became a leading cultural, political and religious centre, inaugurating the Pax Romana, a period of more than 200 years during which Italy's law, technology, economy, art, and literature developed. Italy remained the homeland of the Romans and the metropole of the empire, whose legacy can also be observed in the global distribution of culture, governments, Christianity and the Latin script.")
-			question = st.text_input("Question", "How large is Italy?")
-		
-		result = predictor.predict(question, passage)
-
-		# From the result, we want "best_span", "question_tokens", and "passage_tokens"
-		start, end = result["best_span"]
-		
-		question_tokens = result["question_tokens"]
-		passage_tokens = result["passage_tokens"]
-		mds = [f"**{token}**" if start <= i <= end else token if start - 10 <= i <= end + 10 else "" for i, token in enumerate(passage_tokens)]
-		st.markdown(" ".join(mds))
-
-		attention = result["passage_question_attention"]
-
-		plt.figure(figsize=(12,12))
-		sns.heatmap(attention, cmap="YlGnBu")
-		plt.autoscale(enable=True, axis='x')
-		plt.xticks(np.arange(len(question_tokens)), labels=question_tokens)
-		st.pyplot()
+		NLP_qa.add_qa()
 
 # II. Computer Vision
 
 elif topic == "Computer Vision":
 
-	sub_topic = st.sidebar.radio("Algorithm", ["Object Detection", "Face Detection", "Face Recognition", "Sentiment Detection"])
+	sub_topic = st.sidebar.radio("Algorithm", ["Face Detection", "Object Detection"])
+	# To add: "Face Recognition", "Sentiment Detection"
 
 	if sub_topic == "Face Detection":
 
-		st.title("Face Detection")
-		st.write("Face detection is a central algorithm in computer vision. The algorithm implemented below is a Haar Cascade Classifier. It detects several faces using classical methods, and not deep learning. There are however important parameters to choose.")
-		
-		font = cv2.FONT_HERSHEY_SIMPLEX
-		cascPath = "facedetect/haarcascade_frontalface_default.xml"
-		faceCascade = cv2.CascadeClassifier(cascPath)
-		gray = cv2.imread('images/faces.jpg', 0)
-
-		st.markdown("*Original image:*")
-		plt.figure(figsize=(12,8))
-		plt.imshow(gray, cmap='gray')
-		st.pyplot()
-
-		scaleFactor = st.sidebar.slider("Scale Factor", 1.02, 1.15, 1.1, 0.01)
-		minNeighbors = st.sidebar.slider("Number of neighbors", 1, 15, 5, 1)
-		minSize = st.sidebar.slider("Minimum size", 10, 200, 20, 1)
-		
-		# Detect faces
-		faces = faceCascade.detectMultiScale(
-		gray,
-		scaleFactor=scaleFactor,
-		minNeighbors=minNeighbors,
-		flags=cv2.CASCADE_SCALE_IMAGE
-		)
-
-		# For each face
-		for (x, y, w, h) in faces: 
-		    # Draw rectangle around the face
-		    if w > minSize:
-		    	cv2.rectangle(gray, (x, y), (x+w, y+h), (0, 0, 0), 5)
-		st.markdown("*Detected faces:*")
-		plt.figure(figsize=(12,8))
-		plt.imshow(gray, cmap='gray')
-		st.pyplot()
+		CV_face.add_face()
 
 	elif sub_topic == "Object Detection":
 
-		st.title("Object Detection")
+		CV_yolo.add_yolo()
 
-		st.write("Object Detection is a field which consists in identifying objects in an image or a video feed. This task involves convolutional neural networks (CNNs), a special type of deep learning architecture. The algorithm presented below is YOLO (You Only Look Once), a state-of-the-art algorithm trained to identify thousands of object types.")
-		# This sidebar UI lets the user select parameters for the YOLO object detector.
-		def object_detector_ui():
-		    st.sidebar.markdown("# Model")
-		    confidence_threshold = st.sidebar.slider("Confidence threshold", 0.0, 1.0, 0.5, 0.01)
-		    return confidence_threshold #overlap_threshold
-
-		# Draws an image with boxes overlayed to indicate the presence of cars, pedestrians etc.
-		def draw_image_with_boxes(image, boxes):
-		    LABEL_COLORS = [0, 255, 0]
-		    image_with_boxes = image.astype(np.float64)
-		    for _, (xmin, ymin, xmax, ymax) in boxes.iterrows():
-		        image_with_boxes[int(ymin):int(ymax),int(xmin):int(xmax),:] += LABEL_COLORS
-		        image_with_boxes[int(ymin):int(ymax),int(xmin):int(xmax),:] /= 2
-
-		    st.image(image_with_boxes.astype(np.uint8), use_column_width=True)
-
-		@st.cache(show_spinner=False)
-		def load_present_image(img):
-		    image = cv2.imread(img, cv2.IMREAD_COLOR)
-		    image = image[:, :, [2, 1, 0]] # BGR -> RGB
-		    return image
-
-		def yolo_v3(image, confidence_threshold=0.5, overlap_threshold=0.3):
-		    #@st.cache()allow_output_mutation=True
-		    def load_network(config_path, weights_path):
-		        net = cv2.dnn.readNetFromDarknet(config_path, weights_path)
-		        output_layer_names = net.getLayerNames()
-		        output_layer_names = [output_layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
-		        return net, output_layer_names
-
-		    net, output_layer_names = load_network("yolov3/yolov3.cfg", "yolov3.weights")
-
-		    blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
-		    net.setInput(blob)
-		    layer_outputs = net.forward(output_layer_names)
-
-		    boxes, confidences, class_IDs = [], [], []
-		    H, W = image.shape[:2]
-
-		    for output in layer_outputs:
-		        for detection in output:
-		            scores = detection[5:]
-		            classID = np.argmax(scores)
-		            confidence = scores[classID]
-		            if confidence > confidence_threshold:
-		                box = detection[0:4] * np.array([W, H, W, H])
-		                centerX, centerY, width, height = box.astype("int")
-		                x, y = int(centerX - (width / 2)), int(centerY - (height / 2))
-		                boxes.append([x, y, int(width), int(height)])
-		                confidences.append(float(confidence))
-		                class_IDs.append(classID)
-
-		    f = open("yolov3/classes.txt", "r")
-		    f = f.readlines()
-		    f = [line.rstrip('\n') for line in list(f)]
-
-		    try:
-		    	st.subheader("Detected objects: " + ', '.join(list(set([f[obj] for obj in class_IDs]))))
-		    except IndexError:
-		    	st.write("Nothing detected")
-
-		    indices = cv2.dnn.NMSBoxes(boxes, confidences, confidence_threshold, overlap_threshold)
-
-		    xmin, xmax, ymin, ymax, labels = [], [], [], [], []
-		    if len(indices) > 0:
-
-		        for i in indices.flatten():
-
-		            x, y, w, h = boxes[i][0], boxes[i][1], boxes[i][2], boxes[i][3]
-		            xmin.append(x)
-		            ymin.append(y)
-		            xmax.append(x+w)
-		            ymax.append(y+h)
-
-		    boxes = pd.DataFrame({"xmin": xmin, "ymin": ymin, "xmax": xmax, "ymax": ymax})
-		    return boxes[["xmin", "ymin", "xmax", "ymax"]]
-
-		confidence_threshold = object_detector_ui()
-		img_type = st.sidebar.selectbox("Select image type?", ['Cars', 'People', 'Animals', "Meeting"])
-
-		if img_type == 'People':
-		    image_url = "images/people.jpg"
-		elif img_type == 'Cars':
-		    image_url = "images/cars.jpg"
-		elif img_type == 'Animals':
-		    image_url = "images/animal.jpg"
-		elif img_type == 'Meeting':
-		    image_url = "images/meeting.jpg"
-
-		image = load_present_image(image_url)
-
-		# Get the boxes for the objects detected by YOLO by running the YOLO model.
-		yolo_boxes = yolo_v3(image, confidence_threshold)
-		draw_image_with_boxes(image, yolo_boxes)
-
-	elif sub_topic == "Sentiment Detection":
-
-		st.title("Sentiment Detection")
 
 # III. Speech Processing
 
 elif topic == "Speech Processing":
-	sub_topic = st.sidebar.radio("Algorithm", ["Voice Activity Detection", "Speaker Identification", "Text to Speech", "Speech to Text"])
+	sub_topic = st.sidebar.radio("Algorithm", ["Voice Activity Detection", "Gender Identification"])
+
+	# To add : "Speaker Identification", "Text to Speech", "Speech to Text"
+
+	if sub_topic == "Voice Activity Detection":
+		SG_activity.add_activity()
+
+	elif sub_topic == "Voice Activity Detection":
+		SG_gender.add_gender()
 
 # IV. Data Visualization
 
